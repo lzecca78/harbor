@@ -17,6 +17,8 @@ worker_pool:
   backend: "redis"
   #Additional config if use 'redis' backend
   redis_pool:
+    #support redis, redis+sentinel
+    #redis+sentinel://:Passw0rd@redis1:26379,redis2:26379/masterPoolName?idle_timeout_seconds=100
     #redis://[arbitrary_username:password@]ipaddress:port/database_index
     #or ipaddress:port[|weight|password|database_index]
     redis_url: "localhost:6379"

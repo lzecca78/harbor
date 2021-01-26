@@ -48,6 +48,8 @@ const (
 
 	// JobServicePoolBackendRedis represents redis backend
 	JobServicePoolBackendRedis = "redis"
+	// JobServicePoolBackendRedisSentinel represents redis+sentinel backend
+	JobServicePoolBackendRedisSentinel = "redis+sentinel"
 
 	// secret of UI
 	uiAuthSecret = "CORE_SECRET"
@@ -234,7 +236,7 @@ func (c *Configuration) loadEnvs() {
 		}
 	}
 
-	if c.PoolConfig != nil && c.PoolConfig.Backend == JobServicePoolBackendRedis {
+	if c.PoolConfig != nil && (c.PoolConfig.Backend == JobServicePoolBackendRedis || c.PoolConfig.Backend == JobServicePoolBackendRedisSentinel) {
 		redisURL := utils.ReadEnv(jobServiceRedisURL)
 		if !utils.IsEmptyStr(redisURL) {
 			if c.PoolConfig.RedisPoolCfg == nil {
@@ -298,12 +300,12 @@ func (c *Configuration) validate() error {
 		return errors.New("no worker worker is configured")
 	}
 
-	if c.PoolConfig.Backend != JobServicePoolBackendRedis {
+	if c.PoolConfig.Backend != JobServicePoolBackendRedis && c.PoolConfig.Backend != JobServicePoolBackendRedisSentinel {
 		return fmt.Errorf("worker worker backend %s does not support", c.PoolConfig.Backend)
 	}
 
 	// When backend is redis
-	if c.PoolConfig.Backend == JobServicePoolBackendRedis {
+	if c.PoolConfig.Backend == JobServicePoolBackendRedis || c.PoolConfig.Backend == JobServicePoolBackendRedisSentinel {
 		if c.PoolConfig.RedisPoolCfg == nil {
 			return fmt.Errorf("redis worker must be configured when backend is set to '%s'", c.PoolConfig.Backend)
 		}
